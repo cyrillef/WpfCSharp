@@ -67,7 +67,14 @@ If you are, it will refresh your access token immediately. If not, it will ask y
 
 
 --------
-Written by Cyrille Fauvel (Autodesk Developer Network)  
-January 2014 <br />
+
+## License
+
+This sample is licensed under the terms of the [MIT License](http://opensource.org/licenses/MIT). Please see the [LICENSE](LICENSE) file for full details.
+
+
+## Written by
+
+Cyrille Fauvel (Autodesk Developer Network)  
 http://www.autodesk.com/adn  
 http://around-the-corner.typepad.com/  
