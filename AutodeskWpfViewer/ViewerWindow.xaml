@@ -1,0 +1,163 @@
+﻿<!--
+// (C) Copyright 2014 by Autodesk, Inc.
+//
+// Permission to use, copy, modify, and distribute this software in
+// object code form for any purpose and without fee is hereby granted, 
+// provided that the above copyright notice appears in all copies and 
+// that both that copyright notice and the limited warranty and
+// restricted rights notice below appear in all supporting 
+// documentation.
+//
+// AUTODESK PROVIDES THIS PROGRAM "AS IS" AND WITH ALL FAULTS. 
+// AUTODESK SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTY OF
+// MERCHANTABILITY OR FITNESS FOR A PARTICULAR USE.  AUTODESK, INC. 
+// DOES NOT WARRANT THAT THE OPERATION OF THE PROGRAM WILL BE
+// UNINTERRUPTED OR ERROR FREE.
+
+//- Written by Cyrille Fauvel, Autodesk Developer Network (ADN)
+//- http://www.autodesk.com/joinadn
+//- January 20th, 2014
+//
+-->
+<Window x:Class="Autodesk.ADN.Toolkit.Wpf.Viewer.ViewerWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Autodesk Wpf 3D Viewer"
+    Width="800" Height="600"
+	Style="{DynamicResource MayaStyle}"
+	Icon="Images/Adsk.ico"
+    >
+
+	<DockPanel>
+		<Grid x:Name="grid3">
+			<Border Margin="5,5,5,5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
+				<Border.Background>
+					<LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+						<GradientStop Color="#76889a" Offset="0" />
+						<GradientStop Color="#191a1c" Offset="1" />
+					</LinearGradientBrush>
+				</Border.Background>
+			</Border>
+
+			<Viewport3D x:Name="viewport" Margin="5,5,5,5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="Auto" Width="Auto">
+				<Viewport3D.Camera>
+					<PerspectiveCamera x:Name="camera" UpDirection="0,-1,0" Position="4,0,0" LookDirection="-1,0,0" FieldOfView="45">
+						<PerspectiveCamera.Transform>
+							<Transform3DGroup />
+						</PerspectiveCamera.Transform>
+					</PerspectiveCamera>
+				</Viewport3D.Camera>
+
+				<ModelVisual3D x:Name="model">
+					<ModelVisual3D.Content>
+						<Model3DGroup x:Name="lights">
+							<AmbientLight x:Name="ambientLightMain" Color="White" />
+							<DirectionalLight x:Name="dirLightMain" Color="White" Direction="-1,-1,-1" />
+						</Model3DGroup>
+					</ModelVisual3D.Content>
+				</ModelVisual3D>
+			</Viewport3D>
+
+			<Canvas x:Name="canvas" Margin="5,5,5,5" Background="Transparent" MouseDown="Grid_MouseDown" MouseMove="Grid_MouseMove" MouseUp="Grid_MouseUp" MouseWheel="Grid_MouseWheel">
+				<Viewport3D x:Name="cubeViewport" HorizontalAlignment="Left" VerticalAlignment="Top" Height="60" Width="60">
+					<Viewport3D.Camera>
+						<PerspectiveCamera x:Name="cubeCamera" UpDirection="0,-1,0" Position="4,0,0" LookDirection="-1,0,0" FieldOfView="45">
+							<PerspectiveCamera.Transform>
+								<Transform3DGroup />
+							</PerspectiveCamera.Transform>
+						</PerspectiveCamera>
+					</Viewport3D.Camera>
+
+					<ModelVisual3D x:Name="cubeModel">
+						<ModelVisual3D.Content>
+							<Model3DGroup x:Name="cubeLights">
+								<AmbientLight x:Name="cubeAmbientLightMain" Color="White" />
+							</Model3DGroup>
+						</ModelVisual3D.Content>
+					</ModelVisual3D>
+				</Viewport3D>
+				
+				<Button x:Name="Home" ToolTip="Home" Canvas.Right="10" Canvas.Top="10" Width="20" Height="20" Background="Transparent" BorderThickness="0" Click="Home_Click">
+					<Image>
+						<Image.Style>
+							<Style TargetType="{x:Type Image}">
+								<Setter Property="Source" Value="Images/home.png" />
+								<Style.Triggers>
+									<Trigger Property="IsMouseOver" Value="True">
+										<Setter Property="Source" Value="Images/homehighlighted.png" />
+									</Trigger>
+								</Style.Triggers>
+							</Style>
+						</Image.Style>
+					</Image>
+				</Button>
+				<Button x:Name="Wireframe" ToolTip="Wireframe" Canvas.Right="10" Canvas.Top="35" Width="20" Height="20" Background="Transparent" BorderThickness="0" Click="Wireframe_Click">
+					<Image Source="Images/wireframe.png" />
+				</Button>
+				<Button x:Name="SmoothShade" ToolTip="Smooth Shade" Canvas.Right="10" Canvas.Top="60" Width="20" Height="20" Background="Transparent" BorderThickness="0" Click="SmoothShade_Click">
+					<Image Source="Images/smoothshade.png" />
+				</Button>
+				<Button x:Name="WireframeOnShaded" ToolTip="Wireframe on Shaded" Canvas.Right="10" Canvas.Top="85" Width="20" Height="20" Background="Transparent" BorderThickness="0" Click="WireframeOnShaded_Click">
+					<Image Source="Images/wireframeonshaded.png" />
+				</Button>
+				<Button x:Name="Textured" ToolTip="Textured" Canvas.Right="10" Canvas.Top="110" Width="20" Height="20" Background="Transparent" BorderThickness="0" Click="Textured_Click">
+					<Image Source="Images/textured.png" />
+				</Button>
+
+				<ToggleButton x:Name="trackballToggle" IsChecked="False" ToolTip="Maya / Trackball" Canvas.Right="10" Canvas.Bottom="75" Width="20" Height="20" Background="Transparent" BorderThickness="0" Checked="trackballToggle_Checked" Unchecked="trackballToggle_Unchecked">
+					<Image>
+						<Image.Style>
+							<Style TargetType="{x:Type Image}">
+								<Setter Property="Source" Value="Images/trackballOff.png" />
+								<Style.Triggers>
+									<MultiDataTrigger>
+										<MultiDataTrigger.Conditions>
+											<Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ToggleButton}}, Path=IsChecked}" Value="True" />
+										</MultiDataTrigger.Conditions>
+										<Setter Property="Source" Value="Images/trackballOn.png" />
+									</MultiDataTrigger>
+								</Style.Triggers>
+							</Style>
+						</Image.Style>
+					</Image>
+				</ToggleButton>
+				
+				<ToggleButton x:Name="ambiantlightToggle" IsChecked="True" ToolTip="Ambiant Light" Canvas.Right="10" Canvas.Bottom="35" Width="20" Height="20" Background="Transparent" BorderThickness="0" Checked="ambiantlightToggle_Checked" Unchecked="ambiantlightToggle_Unchecked">
+					<Image>
+						<Image.Style>
+							<Style TargetType="{x:Type Image}">
+								<Setter Property="Source" Value="Images/ambiantlightOn.png" />
+								<Style.Triggers>
+									<MultiDataTrigger>
+										<MultiDataTrigger.Conditions>
+											<Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ToggleButton}}, Path=IsChecked}" Value="False" />
+										</MultiDataTrigger.Conditions>
+										<Setter Property="Source" Value="Images/ambiantlightOff.png" />
+									</MultiDataTrigger>
+								</Style.Triggers>
+							</Style>
+						</Image.Style>
+					</Image>
+				</ToggleButton>
+				<ToggleButton x:Name="dirlightToggle" IsChecked="True" ToolTip="Dir Light" Canvas.Right="10" Canvas.Bottom="10" Width="20" Height="20" Background="Transparent" BorderThickness="0" Checked="dirlightToggle_Checked" Unchecked="dirlightToggle_Unchecked">
+					<Image>
+						<Image.Style>
+							<Style TargetType="{x:Type Image}">
+								<Setter Property="Source" Value="Images/dirlightOn.png" />
+								<Style.Triggers>
+									<MultiDataTrigger>
+										<MultiDataTrigger.Conditions>
+											<Condition Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ToggleButton}}, Path=IsChecked}" Value="False" />
+										</MultiDataTrigger.Conditions>
+										<Setter Property="Source" Value="Images/dirlightOff.png" />
+									</MultiDataTrigger>
+								</Style.Triggers>
+							</Style>
+						</Image.Style>
+					</Image>
+				</ToggleButton>
+			</Canvas>
+		</Grid>
+	</DockPanel>
+
+</Window>

@@ -1,0 +1,199 @@
+﻿<!--
+// (C) Copyright 2014 by Autodesk, Inc.
+//
+// Permission to use, copy, modify, and distribute this software in
+// object code form for any purpose and without fee is hereby granted, 
+// provided that the above copyright notice appears in all copies and 
+// that both that copyright notice and the limited warranty and
+// restricted rights notice below appear in all supporting 
+// documentation.
+//
+// AUTODESK PROVIDES THIS PROGRAM "AS IS" AND WITH ALL FAULTS. 
+// AUTODESK SPECIFICALLY DISCLAIMS ANY IMPLIED WARRANTY OF
+// MERCHANTABILITY OR FITNESS FOR A PARTICULAR USE.  AUTODESK, INC. 
+// DOES NOT WARRANT THAT THE OPERATION OF THE PROGRAM WILL BE
+// UNINTERRUPTED OR ERROR FREE.
+
+//- Written by Cyrille Fauvel, Autodesk Developer Network (ADN)
+//- http://www.autodesk.com/joinadn
+//- January 20th, 2014
+//
+-->
+	
+<!--
+	If we want to display more than one DateTemplate within the same ListView
+	http://cloudstore.blogspot.fr/2008/06/creating-custom-view-mode-that-supports.html
+-->
+<Window x:Class="Autodesk.ADN.WpfReCap.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:l="clr-namespace:Autodesk.ADN.WpfReCap"
+	xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+    Title="Autodesk ReCap Web Service Sample"
+    Width="960" Height="655"
+	Style="{DynamicResource MayaStyle}"
+	Loaded="Window_Loaded"
+	Icon="Images/Adsk.ico"
+    >
+
+	<Window.Resources>
+
+		<!--DataTemplate x:Key="centralTile">
+			<StackPanel Height="100" Width="100">
+				<Grid Width="95" Height="70" HorizontalAlignment="Center">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="16" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					<CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListViewItem}}" />
+					<Image Grid.Column="1" Source="{Binding XPath=@Image}" Margin="6,6,6,9"/>
+				</Grid>
+				<TextBlock Text="{Binding XPath=@Name}" HorizontalAlignment="Center" Margin="0,0,0,1" />
+				<TextBlock Text="{Binding XPath=@Type}" HorizontalAlignment="Center" Margin="0,0,0,1" />
+			</StackPanel>
+		</DataTemplate>
+		<XmlDataProvider x:Key="myXmlDataBase" XPath="/myXmlData">
+			<x:XData>
+				<myXmlData xmlns="">
+					<Item Name ="ReCap0" Type ="jpg" Image ="Images\ReCap0.jpg" />
+					<Item Name ="ReCap1" Type ="jpg" Image ="Images\ReCap1.jpg" />
+					<Item Name ="ReCap2" Type ="jpg" Image ="Images\ReCap2.jpg" />
+					<Item Name ="ReCap3" Type ="jpg" Image ="Images\ReCap3.jpg" />
+					<Item Name ="ReCap4" Type ="jpg" Image ="Images\ReCap4.jpg" />
+				</myXmlData>
+			</x:XData>
+		</XmlDataProvider-->
+
+		<DataTemplate x:Key="centralTile">
+			<StackPanel Height="100" Width="100" ToolTip="{Binding Name}" Margin="2">
+				<Grid Width="95" Height="70" HorizontalAlignment="Center">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="16" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					<CheckBox Grid.Column="0" IsChecked="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListViewItem}}" />
+					<Image Grid.Column="1" Source="{Binding Image, Converter={StaticResource ImageSourceConverter}}" Margin="6,6,6,9" />
+				</Grid>
+				<TextBlock Text="{Binding Name}" HorizontalAlignment="Center" Margin="0,0,0,1" />
+				<TextBlock Text="{Binding Type}" HorizontalAlignment="Center" Margin="0,0,0,1" />
+			</StackPanel>
+		</DataTemplate>
+
+		<l:TileView x:Key="recapView" ItemTemplate="{StaticResource centralTile}" ItemWidth="100" />
+
+	</Window.Resources>
+
+	<DockPanel>
+		<Grid x:Name="grid2">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="6" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="5" />
+				<ColumnDefinition Width="355" />
+				<ColumnDefinition Width="0" />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="24" />
+				<RowDefinition Height="*" />
+				<RowDefinition Height="40" />
+			</Grid.RowDefinitions>
+
+			<Menu DockPanel.Dock="Top" Grid.Column="0" Grid.ColumnSpan="5">
+				<MenuItem Header="" Click="LoginMenu_Click" ToolTip="Login/Logout from the ReCap WEB Service." Width="28">
+					<MenuItem.Icon>
+						<Image x:Name="ReCapLoginIcon" Source="/Images/Login.png" />
+					</MenuItem.Icon>
+				</MenuItem>
+				<Separator />
+				<MenuItem Header="" Click="LoggerMenu_Click" ToolTip="Open the ReCap REST logger window." Width="28">
+					<MenuItem.Icon>
+						<Image x:Name="RestLoggerIcon" Source="/Images/RestLogger.png" />
+					</MenuItem.Icon>
+				</MenuItem>
+				<Separator />
+				<MenuItem Header="" Click="CreatePhotoscene_Click" ToolTip="Create a new Photoscene." Width="28">
+					<MenuItem.Icon>
+						<Image x:Name="ReCapCreatePhotoscene" Source="/Images/Add.png" />
+					</MenuItem.Icon>
+				</MenuItem>
+				<ComboBox x:Name="outputQuality" Width="80" Margin="-20,0,-35,0" ToolTip="Select Quality for the next created Photoscene" />
+				<ComboBox x:Name="outputFormat" Width="80" Margin="-20,0,0,0" ToolTip="Select Format for the next created Photoscene" />
+				<Separator />
+				<MenuItem Header="" Click="PhotoScenesRefresh_Click" ToolTip="Refresh Photoscene project list." Width="28">
+					<MenuItem.Icon>
+						<Image x:Name="ReCapPhotoscenesRefresh" Source="/Images/Refresh.png" />
+					</MenuItem.Icon>
+				</MenuItem>
+				<CheckBox x:Name="showDeleted" Content="Show deleted scenes" Width="150" Margin="-20,0,-35,0" ToolTip="Hide/Show deleted scenes (Hide is default)" Checked="showDeleted_Checked" Unchecked="showDeleted_Checked" />
+			</Menu>
+
+			<ListView x:Name="PhotoScenes" Grid.Column="1" Grid.Row="1"
+				Width="Auto" Height="Auto" Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" SelectionChanged="PhotoScenes_SelectionChanged">
+				<ListView.ContextMenu>
+					<ContextMenu>
+						<MenuItem Header="Refresh" Click="PhotoScenes_Refresh">
+							<MenuItem.Icon>
+								<Image Source="/Images/Refresh.png" Width="16" Height="16" />
+							</MenuItem.Icon>
+						</MenuItem>
+						<Separator />
+						<MenuItem Header="Upload photo(s)" Click="PhotoScenes_UploadPhotos">
+							<MenuItem.Icon>
+								<Image Source="/Images/Upload.png" Width="16" Height="16" />
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem Header="Process Scene" Click="PhotoScenes_ProcessPhotoscene">
+							<MenuItem.Icon>
+								<Image Source="/Images/Process.png" Width="16" Height="16" />
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem Header="Properties" Click="PhotoScenes_Properties">
+							<MenuItem.Icon>
+								<Image Source="/Images/Properties.png" Width="16" Height="16" />
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem x:Name="menuDownloadResult" Header="Download result" Click="PhotoScenes_DownloadResult">
+							<MenuItem.Icon>
+								<Image Source="/Images/Download.png" Width="16" Height="16" />
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem x:Name="menuPreview" Header="Preview" Click="PhotoScenes_Preview">
+							<MenuItem.Icon>
+								<Image Source="/Images/3dviewer.png" Width="16" Height="16" />
+							</MenuItem.Icon>
+						</MenuItem>
+						<Separator />
+						<MenuItem Header="Delete" Click="PhotoScenes_DeletePhotoscene">
+							<MenuItem.Icon>
+								<Image Source="/Images/Cancel.png" Width="16" Height="16" />
+							</MenuItem.Icon>
+						</MenuItem>
+						<Separator />
+						<MenuItem Header="Test Connection" Click="PhotoScenes_TestConnection">
+							<MenuItem.Icon>
+								<Image Source="/Images/Connection.png" Width="16" Height="16" />
+							</MenuItem.Icon>
+						</MenuItem>
+					</ContextMenu>
+				</ListView.ContextMenu>
+			</ListView>
+			<GridSplitter Grid.Column="2" Grid.Row="1" Width="5" Height="Auto" HorizontalAlignment="Stretch" />
+			<xctk:PropertyGrid x:Name="propertyGrid" Grid.Column="3" Grid.Row="1" Margin="0" AutoGenerateProperties="True" />
+
+			<Label x:Name="connectedLabel" Grid.Column="1" Grid.Row="2" Content="Not yet connected to ReCap Server" Height="24" HorizontalAlignment="Left" VerticalAlignment="Top" Width="339" Padding="0" Margin="0,6,0,0" />
+			<Label x:Name="connectedTimeLabel" Grid.Column="1" Grid.Row="2" Content="-" Height="24" HorizontalAlignment="Left" VerticalAlignment="Top" Width="339" Padding="0" Margin="0,23,0,0" />
+			<TextBlock Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="2" Height="24" HorizontalAlignment="Left" Margin="374,3,0,0"  VerticalAlignment="Top" Width="269">
+				<Hyperlink x:Name="serverLabel" NavigateUri="http://recap360.autodesk.com/Signin.aspx" RequestNavigate="recapAPI_RequestNavigate">
+					ReCap server
+				</Hyperlink>
+			</TextBlock>
+			<TextBlock x:Name="recap360Label" Grid.Column="1" Grid.ColumnSpan="3" Grid.Row="2" Height="24" HorizontalAlignment="Left" Margin="374,20,0,0"  VerticalAlignment="Top" Width="269">
+				<Hyperlink NavigateUri="http://recap360.autodesk.com/Signin.aspx" RequestNavigate="recap360_RequestNavigate">
+					http://recap360.autodesk.com/Signin.aspx
+				</Hyperlink>
+			</TextBlock>
+
+		</Grid>
+	</DockPanel>
+
+</Window>
