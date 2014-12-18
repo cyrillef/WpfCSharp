@@ -37,7 +37,7 @@ Building the sample
 
 The sample was created using Visual Studio 2012 Service Pack 1, but should build/work fine with Visual Studio 2010 and 2013.
 
-You first need to modify (or create) the UserSettings.cs file and put your oAuth /ReCap credentials in it.
+You first need to modify (or create) the UserSettings.cs file and put your oAuth /ReCap credentials in it. An example of that file is provided as UserSettings_.cs.
 	 
 Use of the sample
 -------------------------
