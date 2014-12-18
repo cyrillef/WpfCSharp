@@ -32,14 +32,14 @@ namespace Autodesk.ADN.WpfReCap {
 		// Hard coded consumer and secret keys and base URL.
 		// In real world Apps, these values need to secured.
 		// One approach is to encrypt and/or obfuscate these values
-		public static readonly string CONSUMER_KEY ="your consumer key" ;
-		public static readonly string CONSUMER_SECRET ="your consumer secret key" ;
+		public static readonly string CONSUMER_KEY ="your_consumer_key" ;
+		public static readonly string CONSUMER_SECRET ="your_consumer_secret_key" ;
 		public static readonly string OAUTH_HOST ="https://accounts.autodesk.com/" ; // Autodesk production accounts server
 		//public static readonly string OAUTH_HOST ="https://accounts-staging.autodesk.com/" ; // Autodesk staging accounts server
 
 		// ReCap: Fill in these macros with the correct information (only the 2 first are important)
 		public static readonly string ReCapAPIURL ="http://rc-api-adn.autodesk.com/3.1/API/" ;
-		public static readonly string ReCapClientID ="your ReCap client ID" ;
+		public static readonly string ReCapClientID ="your_ReCap_client_ID" ;
 		//public static readonly string ReCapKey ="your ReCap client key" ; // not used anymore
 
 		// Do not edit
